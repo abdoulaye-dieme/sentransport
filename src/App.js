@@ -10,6 +10,7 @@ function App() {
   const [recherche, setRecherche] = useState("");
   const [ligneSelectionnee, setLigneSelectionnee]
     = useState(null);
+  const [nbRecherches, setNbRecherches] = useState(0);
   const lignes = [  
     { id: 1, numero: "1", depart: "Parcelles Assainies",
       arrivee: "Plateau", arrets: 14,
@@ -60,25 +61,41 @@ function App() {
     <div className="App">
       <Header />
       <main className="contenu">
-        <Recherche valeur={recherche}
-                    onChange={setRecherche} />
+        <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
+  <Recherche
+  valeur={recherche}
+  onChange={(val) => {
+    setRecherche(val);
+    setNbRecherches(prev => prev + 1);
+  }}
+/>
+<p>Vous avez effectué {nbRecherches} recherche(s)</p>
+  <button onClick={() => setRecherche("")}>
+    Effacer
+  </button>
+</div>
         <p className="resultat-recherche">
           {lignesFiltrees.length} ligne
           {lignesFiltrees.length > 1 ? 's' : ''} trouvee
           {lignesFiltrees.length > 1 ? 's' : ''}
         </p>
-        {lignesFiltrees.map(ligne => (
-          <LigneBus
-            key={ligne.id}
-            numero={ligne.numero}
-            depart={ligne.depart}
-            arrivee={ligne.arrivee}
-            arrets={ligne.arrets}
-            estSelectionnee={ligneSelectionnee
-              && ligneSelectionnee.id === ligne.id}
-            onClick={() => handleClickLigne(ligne)}
-          />
-        ))}
+        {lignesFiltrees.length === 0 ? (
+  <p>Aucune ligne trouvée</p>
+) : (
+  lignesFiltrees.map(ligne => (
+    <LigneBus
+      key={ligne.id}
+      numero={ligne.numero}
+      depart={ligne.depart}
+      arrivee={ligne.arrivee}
+      arrets={ligne.arrets}
+      estSelectionnee={
+        ligneSelectionnee && ligneSelectionnee.id === ligne.id
+      }
+      onClick={() => handleClickLigne(ligne)}
+    />
+  ))
+)}
         {ligneSelectionnee
           && <DetailLigne ligne={ligneSelectionnee} />}
     </main>
